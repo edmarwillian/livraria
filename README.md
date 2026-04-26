@@ -4,6 +4,16 @@ API REST desenvolvida em **Spring Boot** para gerenciamento de uma livraria.
 
 ---
 
+## 📊 Diagramas do Projeto
+
+### Diagrama do Sistema
+![Diagrama](docs/imagens/diagrama.jpg)
+
+### Modelo do Branco de Dados
+![Modelo](docs/imagens/modelo.jpg)
+
+---
+
 ## 🚀 Tecnologias
 
 * Java
