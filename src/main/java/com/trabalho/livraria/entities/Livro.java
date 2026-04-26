@@ -30,4 +30,6 @@ public class Livro {
 
     private String categoria;
     private String autor;
+
+    private String capa;
 }

@@ -1,21 +1,18 @@
 package com.trabalho.livraria.controllers;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.trabalho.livraria.entities.Livro;
 import com.trabalho.livraria.services.LivroService;
-
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 @RestController
 @RequestMapping("/livros")
@@ -23,6 +20,8 @@ public class LivroController {
 
     @Autowired
     private LivroService service;
+
+    private static final String UPLOAD_DIR = "uploads/capas/";
 
     @GetMapping
     public List<Livro> listar() {
@@ -57,5 +56,26 @@ public class LivroController {
             throw new RuntimeException("Livro não encontrado");
 
         service.deletar(id);
+    }
+
+    @PostMapping("/upload/{id}")
+    public Livro uploadCapa(@PathVariable Long id, @RequestParam MultipartFile arquivo) throws IOException {
+
+        Livro livro = service.buscarPorId(id);
+        if (livro == null)
+            throw new RuntimeException("Livro não encontrado");
+
+        Files.createDirectories(Paths.get(UPLOAD_DIR));
+
+        String nomeDoArquivo = "livro_" + id + "_" + arquivo.getOriginalFilename();
+        Path path = Paths.get(UPLOAD_DIR + nomeDoArquivo);
+
+        Files.write(path, arquivo.getBytes(),
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING);
+
+        livro.setCapa(nomeDoArquivo);
+
+        return service.salvar(livro);
     }
 }
