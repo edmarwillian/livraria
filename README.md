@@ -127,6 +127,8 @@ POST /livros
 }
 ```
 
+<br>
+
 ```
 POST /livros/upload/{id}
 ```
