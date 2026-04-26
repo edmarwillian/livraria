@@ -111,6 +111,7 @@ DELETE /clientes/{id}
 ```
 GET /livros
 GET /livros/{id}
+GET /livros/capa/{id}
 ```
 
 ### POST
@@ -130,7 +131,7 @@ POST /livros
 <br>
 
 ```
-POST /livros/upload/{id}
+POST /livros/capa/{id}
 ```
 
 **Content-Type:** multipart/form-data
