@@ -1,54 +1,78 @@
-# 📊 Livraria API — Spring Boot
+# 📚 Livraria API — Spring Boot
 
-API REST para gerenciamento de uma livraria.
-
----
-
-## Diagramas do Projeto
-
-### Diagrama do sistema
-![Diagrama](docs/imagens/diagrama.jpg)
-
-### Modelo de dados
-![Modelo](docs/imagens/modelo.jpg)
+API REST desenvolvida em **Spring Boot** para gerenciamento de uma livraria.
 
 ---
 
-# Autenticação
+## 🚀 Tecnologias
 
-A API utiliza Basic Auth.
+* Java
+* Spring Boot
+* Spring Data JPA
+* Spring Security
+* Lombok
+* H2 Database
 
-Credenciais padrão:
+---
+
+## 🔐 Autenticação
+
+A API utiliza **Basic Auth**.
+
+### Credenciais padrão:
 
 ```
 Username: admin
 Password: 123
 ```
 
-Importante:
+### ⚠️ Importante:
 
-* GET → público (não precisa login)
-* POST / PUT / DELETE → requer autenticação
+* **GET** → público (não precisa login)
+* **POST / PUT / DELETE** → requer autenticação
 
 ---
 
-# Endpoints
+## 🗄️ Banco de Dados
 
-## Clientes
+Banco em memória **(H2)**
 
-GET
+### Acesso ao console:
+
+```
+http://localhost:8080/h2-console
+```
+
+---
+
+## 📦 Entidades
+
+* Cliente
+* Livro
+* Pedido
+* Contem (relacionamento Pedido ↔ Livro)
+* Estoque
+
+---
+
+# 🔗 Endpoints
+
+## 👤 Clientes
+
+### GET
 
 ```
 GET /clientes
 GET /clientes/{id}
 ```
 
-POST
+### POST
 
 ```
 POST /clientes
 ```
 
+**Content-Type:** application/json
 ```json
 {
   "nome": "João",
@@ -56,13 +80,13 @@ POST /clientes
 }
 ```
 
-PUT
+### PUT
 
 ```
 PUT /clientes/{id}
 ```
 
-DELETE
+### DELETE
 
 ```
 DELETE /clientes/{id}
@@ -70,21 +94,22 @@ DELETE /clientes/{id}
 
 ---
 
-## Livros
+## 📖 Livros
 
-GET
+### GET
 
 ```
 GET /livros
 GET /livros/{id}
 ```
 
-POST
+### POST
 
 ```
 POST /livros
 ```
 
+**Content-Type:** application/json
 ```json
 {
   "titulo": "Java",
@@ -92,13 +117,22 @@ POST /livros
 }
 ```
 
-PUT
+```
+POST /livros/upload/{id}
+```
+
+**Content-Type:** multipart/form-data
+| Chave | Valor|
+|-------|------|
+|Arquivo|Imagem|
+
+### PUT
 
 ```
 PUT /livros/{id}
 ```
 
-DELETE
+### DELETE
 
 ```
 DELETE /livros/{id}
@@ -106,21 +140,22 @@ DELETE /livros/{id}
 
 ---
 
-## Pedidos
+## 🧾 Pedidos
 
-GET
+### GET
 
 ```
 GET /pedidos
 GET /pedidos/{id}
 ```
 
-POST
+### POST
 
 ```
 POST /pedidos
 ```
 
+**Content-Type:** application/json
 ```json
 {
   "cliente": {
@@ -129,13 +164,13 @@ POST /pedidos
 }
 ```
 
-PUT
+### PUT
 
 ```
 PUT /pedidos/{id}
 ```
 
-DELETE
+### DELETE
 
 ```
 DELETE /pedidos/{id}
@@ -143,21 +178,22 @@ DELETE /pedidos/{id}
 
 ---
 
-## Contem
+## 🔗 Contem (Pedido ↔ Livro)
 
-GET
+### GET
 
 ```
 GET /contem
 GET /contem/{id}
 ```
 
-POST
+### POST
 
 ```
 POST /contem
 ```
 
+**Content-Type:** application/json
 ```json
 {
   "pedido": {
@@ -169,13 +205,13 @@ POST /contem
 }
 ```
 
-PUT
+### PUT
 
 ```
 PUT /contem/{id}
 ```
 
-DELETE
+### DELETE
 
 ```
 DELETE /contem/{id}
@@ -183,21 +219,22 @@ DELETE /contem/{id}
 
 ---
 
-## Estoque
+## 📦 Estoque
 
-GET
+### GET
 
 ```
 GET /estoque
 GET /estoque/{id}
 ```
 
-POST
+### POST
 
 ```
 POST /estoque
 ```
 
+**Content-Type:** application/json
 ```json
 {
   "quantidadeLivro": 10,
@@ -207,13 +244,13 @@ POST /estoque
 }
 ```
 
-PUT
+### PUT
 
 ```
 PUT /estoque/{id}
 ```
 
-DELETE
+### DELETE
 
 ```
 DELETE /estoque/{id}
