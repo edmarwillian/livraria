@@ -3,6 +3,7 @@ package com.trabalho.livraria.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,37 +26,39 @@ public class EstoqueController {
     private EstoqueService service;
 
     @GetMapping
-    public List<Estoque> listar() {
-        return service.listar();
+    public ResponseEntity<List<Estoque>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public Estoque buscar(@PathVariable Long id) {
+    public ResponseEntity<Estoque> buscar(@PathVariable Long id) {
         Estoque estoque = service.buscarPorId(id);
         if (estoque == null)
-            throw new RuntimeException("Estoque não encontrado");
-        return estoque;
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(estoque);
     }
 
     @PostMapping
-    public Estoque salvar(@RequestBody @Valid Estoque estoque) {
-        return service.salvar(estoque);
+    public ResponseEntity<Estoque> salvar(@RequestBody @Valid Estoque estoque) {
+        return ResponseEntity.ok(service.salvar(estoque));
     }
 
     @PutMapping("/{id}")
-    public Estoque atualizar(@PathVariable Long id, @RequestBody @Valid Estoque estoque) {
+    public ResponseEntity<Estoque> atualizar(@PathVariable Long id, @RequestBody @Valid Estoque estoque) {
         if (service.buscarPorId(id) == null)
-            throw new RuntimeException("Estoque não encontrado");
+            return ResponseEntity.notFound().build();
 
         estoque.setId(id);
-        return service.salvar(estoque);
+        return ResponseEntity.ok(service.salvar(estoque));
     }
 
     @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
         if (service.buscarPorId(id) == null)
-            throw new RuntimeException("Estoque não encontrado");
+            return ResponseEntity.notFound().build();
 
         service.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }

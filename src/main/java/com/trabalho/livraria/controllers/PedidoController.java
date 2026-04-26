@@ -3,6 +3,7 @@ package com.trabalho.livraria.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,37 +26,39 @@ public class PedidoController {
     private PedidoService service;
 
     @GetMapping
-    public List<Pedido> listar() {
-        return service.listar();
+    public ResponseEntity<List<Pedido>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public Pedido buscar(@PathVariable Long id) {
+    public ResponseEntity<Pedido> buscar(@PathVariable Long id) {
         Pedido pedido = service.buscarPorId(id);
         if (pedido == null)
-            throw new RuntimeException("Pedido não encontrado");
-        return pedido;
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(pedido);
     }
 
     @PostMapping
-    public Pedido salvar(@RequestBody @Valid Pedido pedido) {
-        return service.salvar(pedido);
+    public ResponseEntity<Pedido> salvar(@RequestBody @Valid Pedido pedido) {
+        return ResponseEntity.ok(service.salvar(pedido));
     }
 
     @PutMapping("/{id}")
-    public Pedido atualizar(@PathVariable Long id, @RequestBody @Valid Pedido pedido) {
+    public ResponseEntity<Pedido> atualizar(@PathVariable Long id, @RequestBody @Valid Pedido pedido) {
         if (service.buscarPorId(id) == null)
-            throw new RuntimeException("Pedido não encontrado");
+            return ResponseEntity.notFound().build();
 
         pedido.setNumeroPedido(id);
-        return service.salvar(pedido);
+        return ResponseEntity.ok(service.salvar(pedido));
     }
 
     @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
         if (service.buscarPorId(id) == null)
-            throw new RuntimeException("Pedido não encontrado");
+            return ResponseEntity.notFound().build();
 
         service.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -3,6 +3,7 @@ package com.trabalho.livraria.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,37 +26,39 @@ public class ClienteController {
     private ClienteService service;
 
     @GetMapping
-    public List<Cliente> listar() {
-        return service.listar();
+    public ResponseEntity<List<Cliente>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public Cliente buscar(@PathVariable Long id) {
+    public ResponseEntity<Cliente> buscar(@PathVariable Long id) {
         Cliente cliente = service.buscarPorId(id);
         if (cliente == null)
-            throw new RuntimeException("Cliente não encontrado");
-        return cliente;
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(cliente);
     }
 
     @PostMapping
-    public Cliente salvar(@RequestBody @Valid Cliente cliente) {
-        return service.salvar(cliente);
+    public ResponseEntity<Cliente> salvar(@RequestBody @Valid Cliente cliente) {
+        return ResponseEntity.ok(service.salvar(cliente));
     }
 
     @PutMapping("/{id}")
-    public Cliente atualizar(@PathVariable Long id, @RequestBody @Valid Cliente cliente) {
+    public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @RequestBody @Valid Cliente cliente) {
         if (service.buscarPorId(id) == null)
-            throw new RuntimeException("Cliente não encontrado");
+            return ResponseEntity.notFound().build();
 
         cliente.setCodCliente(id);
-        return service.salvar(cliente);
+        return ResponseEntity.ok(service.salvar(cliente));
     }
 
     @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
         if (service.buscarPorId(id) == null)
-            throw new RuntimeException("Cliente não encontrado");
+            return ResponseEntity.notFound().build();
 
         service.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }

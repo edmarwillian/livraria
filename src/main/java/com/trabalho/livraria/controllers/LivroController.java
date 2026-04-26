@@ -4,6 +4,8 @@ import com.trabalho.livraria.entities.Livro;
 import com.trabalho.livraria.services.LivroService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,46 +26,49 @@ public class LivroController {
     private static final String UPLOAD_DIR = "uploads/capas/";
 
     @GetMapping
-    public List<Livro> listar() {
-        return service.listar();
+    public ResponseEntity<List<Livro>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public Livro buscar(@PathVariable Long id) {
+    public ResponseEntity<Livro> buscar(@PathVariable Long id) {
         Livro livro = service.buscarPorId(id);
         if (livro == null)
-            throw new RuntimeException("Livro não encontrado");
-        return livro;
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(livro);
     }
 
     @PostMapping
-    public Livro salvar(@RequestBody @Valid Livro livro) {
-        return service.salvar(livro);
+    public ResponseEntity<Livro> salvar(@RequestBody @Valid Livro livro) {
+        return ResponseEntity.ok(service.salvar(livro));
     }
 
     @PutMapping("/{id}")
-    public Livro atualizar(@PathVariable Long id, @RequestBody @Valid Livro livro) {
+    public ResponseEntity<Livro> atualizar(@PathVariable Long id, @RequestBody @Valid Livro livro) {
         if (service.buscarPorId(id) == null)
-            throw new RuntimeException("Livro não encontrado");
+            return ResponseEntity.notFound().build();
 
         livro.setCodLivro(id);
-        return service.salvar(livro);
+        return ResponseEntity.ok(service.salvar(livro));
     }
 
     @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
         if (service.buscarPorId(id) == null)
-            throw new RuntimeException("Livro não encontrado");
+            return ResponseEntity.notFound().build();
 
         service.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/upload/{id}")
-    public Livro uploadCapa(@PathVariable Long id, @RequestParam MultipartFile arquivo) throws IOException {
+    @PostMapping("/capa/{id}")
+    public ResponseEntity<Livro> uploadCapa(@PathVariable Long id,
+                                           @RequestParam MultipartFile arquivo) throws IOException {
 
         Livro livro = service.buscarPorId(id);
         if (livro == null)
-            throw new RuntimeException("Livro não encontrado");
+            return ResponseEntity.notFound().build();
 
         Files.createDirectories(Paths.get(UPLOAD_DIR));
 
@@ -76,6 +81,29 @@ public class LivroController {
 
         livro.setCapa(nomeDoArquivo);
 
-        return service.salvar(livro);
+        return ResponseEntity.ok(service.salvar(livro));
+    }
+
+    @GetMapping("/capa/{id}")
+    public ResponseEntity<byte[]> getCapa(@PathVariable Long id) throws IOException {
+
+        Livro livro = service.buscarPorId(id);
+        if (livro == null || livro.getCapa() == null)
+            return ResponseEntity.notFound().build();
+
+        Path path = Paths.get(UPLOAD_DIR + livro.getCapa());
+
+        if (!Files.exists(path))
+            return ResponseEntity.notFound().build();
+
+        byte[] imagem = Files.readAllBytes(path);
+
+        String contentType = Files.probeContentType(path);
+        if (contentType == null)
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(imagem);
     }
 }

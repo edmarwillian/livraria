@@ -3,6 +3,7 @@ package com.trabalho.livraria.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,37 +26,39 @@ public class ContemController {
     private ContemService service;
 
     @GetMapping
-    public List<Contem> listar() {
-        return service.listar();
+    public ResponseEntity<List<Contem>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public Contem buscar(@PathVariable Long id) {
+    public ResponseEntity<Contem> buscar(@PathVariable Long id) {
         Contem contem = service.buscarPorId(id);
         if (contem == null)
-            throw new RuntimeException("Item não encontrado");
-        return contem;
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(contem);
     }
 
     @PostMapping
-    public Contem salvar(@RequestBody @Valid Contem contem) {
-        return service.salvar(contem);
+    public ResponseEntity<Contem> salvar(@RequestBody @Valid Contem contem) {
+        return ResponseEntity.ok(service.salvar(contem));
     }
 
     @PutMapping("/{id}")
-    public Contem atualizar(@PathVariable Long id, @RequestBody @Valid Contem contem) {
+    public ResponseEntity<Contem> atualizar(@PathVariable Long id, @RequestBody @Valid Contem contem) {
         if (service.buscarPorId(id) == null)
-            throw new RuntimeException("Item não encontrado");
+            return ResponseEntity.notFound().build();
 
         contem.setId(id);
-        return service.salvar(contem);
+        return ResponseEntity.ok(service.salvar(contem));
     }
 
     @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
         if (service.buscarPorId(id) == null)
-            throw new RuntimeException("Item não encontrado");
+            return ResponseEntity.notFound().build();
 
         service.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }
