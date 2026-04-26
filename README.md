@@ -1,6 +1,16 @@
-# Livraria API — Spring Boot
+# 📊 Livraria API — Spring Boot
 
 API REST para gerenciamento de uma livraria.
+
+---
+
+## Diagramas do Projeto
+
+### Diagrama do sistema
+![Diagrama](docs/imagens/diagrama.jpg)
+
+### Modelo de dados
+![Modelo](docs/imagens/modelo.jpg)
 
 ---
 
